@@ -70,16 +70,27 @@ window.fxEnabled = true
   const particles = []
   const COUNT = 60
 
-  for (let i = 0; i < COUNT; i++) {
-    particles.push({
-      x:  Math.random() * innerWidth,
-      y:  Math.random() * innerHeight,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
+  function makeParticle (x, y) {
+    const angle = Math.random() * Math.PI * 2
+    const speed = 0.3 + Math.random() * 0.7
+    return {
+      x:  x != null ? x : Math.random() * innerWidth,
+      y:  y != null ? y : Math.random() * innerHeight,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
       r:  Math.random() * 2 + 0.5,
-      o:  Math.random() * 0.4 + 0.1
-    })
+      o:  Math.random() * 0.4 + 0.1,
+      life: x != null ? 1 : null   /* spawned particles fade out */
+    }
   }
+
+  for (let i = 0; i < COUNT; i++) particles.push(makeParticle())
+
+  /* Spawn particles on click */
+  document.addEventListener('click', e => {
+    const burst = 5 + Math.floor(Math.random() * 4)
+    for (let i = 0; i < burst; i++) particles.push(makeParticle(e.clientX, e.clientY))
+  })
 
   function draw () {
     ctx.clearRect(0, 0, c.width, c.height)
@@ -105,10 +116,22 @@ window.fxEnabled = true
       if (p.y < 0) p.y = c.height
       if (p.y > c.height) p.y = 0
 
+      /* Spawned particles fade out */
+      if (p.life !== null) {
+        p.life -= 0.004
+        if (p.life <= 0) { p.dead = true; continue }
+      }
+
       ctx.beginPath()
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-      ctx.fillStyle = `rgba(0,245,255,${p.o})`
+      const alpha = p.life !== null ? p.o * p.life : p.o
+      ctx.fillStyle = `rgba(0,245,255,${alpha})`
       ctx.fill()
+    }
+
+    /* Remove dead particles */
+    for (let i = particles.length - 1; i >= 0; i--) {
+      if (particles[i].dead) particles.splice(i, 1)
     }
 
     /* Draw connections between nearby particles */
