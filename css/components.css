@@ -482,7 +482,7 @@
 .term-input-wrap .prompt { color: var(--neon-green); flex-shrink: 0; font-size: 14px; }
 #termInput {
   flex: 1; background: transparent; border: none; outline: none;
-  color: var(--cyan);
+  color: var(--neon-green);
   font-family: 'Share Tech Mono', monospace; font-size: 14px;
 }
 
