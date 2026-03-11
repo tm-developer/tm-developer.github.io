@@ -1,0 +1,163 @@
+/* ============================================================
+   PRINT — Clean printable version
+   T.M CORP — Cyberpunk CV
+   ============================================================ */
+
+@media print {
+  * { cursor: default !important; }
+
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  /* Hide all FX & overlays */
+  body::before, body::after,
+  #matrixCanvas, #particleCanvas, #terminal,
+  #monitorHud, #monitorHudLeft,
+  .top-hud, .nav-tabs, .crt-vignette,
+  #cursorDot, #cursorRing, #pageTransition,
+  #invaderGame, #blackOverlay, #bootScreen,
+  #lockScreen, #initScreen,
+  .avatar-scan, .avatar-overlay, .avatar-scanline {
+    display: none !important;
+  }
+
+  /* Show all content */
+  #app {
+    display: block !important;
+    opacity: 1 !important;
+  }
+  .content {
+    margin-top: 0 !important;
+    max-width: 100% !important;
+  }
+  .panel-section {
+    display: block !important;
+    opacity: 1 !important;
+    transform: none !important;
+    margin-bottom: 20px;
+    page-break-inside: avoid;
+  }
+
+  /* Panels */
+  .panel {
+    background: #fff !important;
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+  }
+  .panel::before { display: none !important; }
+  .panel-header {
+    color: #333 !important;
+    border-bottom: 1px solid #ddd !important;
+  }
+  .panel-header .icon {
+    background: #333 !important;
+    box-shadow: none !important;
+  }
+
+  /* Identity */
+  .identity-info h1 {
+    background: none !important;
+    -webkit-text-fill-color: #111 !important;
+    color: #111 !important;
+  }
+  .identity-info .tagline { color: #555 !important; }
+  .identity-info .bio     { color: #333 !important; }
+
+  /* Avatar */
+  .avatar-holo {
+    border-color: #333 !important;
+    animation: none !important;
+    overflow: hidden !important;
+  }
+  .avatar-holo::after { display: none !important; }
+  .avatar-holo img {
+    filter: none !important;
+    mix-blend-mode: normal !important;
+  }
+
+  /* Status */
+  .status-item {
+    border-color: #ddd !important;
+    background: #f9f9f9 !important;
+  }
+  .status-item .label { color: #666 !important; }
+  .status-item .value { color: #111 !important; }
+
+  /* Cloud tags */
+  .cloud-tag {
+    border-color: #ccc !important;
+    color: #333 !important;
+  }
+  .cloud-tag::before { display: none !important; }
+
+  /* Skill tags */
+  .skill-tag {
+    border-color: #ccc !important;
+    color: #333 !important;
+  }
+  .skill-tag::before {
+    opacity: 1 !important;
+    box-shadow: none !important;
+  }
+  .skills-columns {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  #radarCanvas { display: block !important; }
+
+  /* Experience */
+  .exp-item::before {
+    border-color: #333 !important;
+    background: #fff !important;
+  }
+  .exp-item::after {
+    background: #ccc !important;
+    opacity: 1 !important;
+  }
+  .exp-item .exp-date { color: #555 !important; }
+  .exp-item h3 { color: #111 !important; }
+  .exp-item p  { color: #333 !important; }
+  .exp-tag {
+    border-color: #ccc !important;
+    color: #555 !important;
+    background: #f5f5f5 !important;
+  }
+
+  /* Education */
+  .edu-card {
+    border-color: #ddd !important;
+    border-left-color: #333 !important;
+    background: #f9f9f9 !important;
+  }
+  .edu-card h3 { color: #111 !important; }
+  .edu-card p  { color: #333 !important; }
+
+  /* Projects */
+  .project-card {
+    border-color: #ddd !important;
+    background: #f9f9f9 !important;
+  }
+  .project-card h3     { color: #111 !important; }
+  .project-card p      { color: #333 !important; }
+  .project-status      { color: #555 !important; border-color: #999 !important; }
+
+  /* Neural Map */
+  .neural-node {
+    border-color: #ddd !important;
+    background: #f9f9f9 !important;
+  }
+  .neural-node .node-label { color: #333 !important; }
+
+  /* Contact */
+  .contact-item { border-color: #ddd !important; }
+  .contact-icon { border-color: #ddd !important; }
+  .contact-label { color: #666 !important; }
+  .contact-value { color: #111 !important; }
+
+  /* Grid */
+  .overview-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .hud-line { background: #ddd !important; }
+}

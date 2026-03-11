@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Thomas Monicault — Web Integrator & Interface Architect. Immersive cyberpunk CV with interactive terminal, sound design and Easter eggs.">
+  <meta property="og:title" content="T.M CORP // Thomas Monicault">
+  <meta property="og:description" content="Web Integrator & Interface Architect — Immersive sci-fi CV experience.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#050914">
+  <title>▀█▀ █▀▄▀█</title>
+
+  <!-- Favicon (generated via canvas) -->
+  <script>
+    (function () {
+      const c = document.createElement('canvas')
+      c.width = 64; c.height = 64
+      const x = c.getContext('2d')
+      x.fillStyle = '#050914'
+      x.fillRect(0, 0, 64, 64)
+      x.font = 'bold 22px "Share Tech Mono", monospace'
+      x.fillStyle = '#00f5ff'
+      x.textAlign = 'center'
+      x.textBaseline = 'middle'
+      x.shadowColor = '#00f5ff'
+      x.shadowBlur = 6
+      x.fillText('▀█▀', 32, 22)
+      x.fillText('█▀▄▀█', 32, 46)
+      const link = document.createElement('link')
+      link.rel = 'icon'
+      link.href = c.toDataURL()
+      document.head.appendChild(link)
+    })()
+  </script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/effects.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/print.css">
+</head>
+
+<body>
+
+  <!-- ======== CANVASES ======== -->
+  <canvas id="matrixCanvas"></canvas>
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- ======== MONITOR HUD (bottom corners) ======== -->
+  <div id="monitorHud">
+    <span id="uptimeCounter">UPTIME 00:00</span>
+    <div class="hud-dot amber"></div>
+  </div>
+  <div id="monitorHudLeft">
+    <div class="hud-indicator">
+      <div class="hud-dot green"></div>
+      <span>SYSTEM OK</span>
+    </div>
+  </div>
+
+  <!-- ======== PAGE TRANSITION ======== -->
+  <div id="pageTransition">
+    <div class="glitch-bar"></div>
+    <div class="glitch-bar"></div>
+    <div class="glitch-bar"></div>
+  </div>
+
+  <!-- ======== CUSTOM CURSOR ======== -->
+  <div id="cursorDot"></div>
+  <div id="cursorRing"></div>
+
+  <!-- ======== SPACE INVADER GAME ======== -->
+  <div id="invaderGame">
+    <div id="invaderHud">
+      <div class="score">SCORE: <span id="invScore">0</span></div>
+      <div class="lives">LIVES: <span id="invLives">3</span></div>
+    </div>
+    <canvas id="invCanvas" width="480" height="400"></canvas>
+    <div id="invaderControls" style="width:480px;max-width:90vw;display:flex;justify-content:space-between;margin-top:10px;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(200,230,255,0.4);letter-spacing:1px;">
+      <span>← → MOVE</span>
+      <span>SPACE SHOOT</span>
+      <span>ESC QUIT</span>
+    </div>
+  </div>
+
+  <!-- ======== CRT VIGNETTE ======== -->
+  <div class="crt-vignette"></div>
+
+  <!-- ======== INIT SCREEN ======== -->
+  <div id="initScreen">
+    <div class="init-prompt">[ CLICK OR PRESS ENTER TO INITIALIZE ]</div>
+  </div>
+
+  <!-- ======== BLACK OVERLAY ======== -->
+  <div id="blackOverlay"></div>
+
+  <!-- ======== LOCK SCREEN ======== -->
+  <div id="lockScreen">
+    <div id="lockLabel">Enter credentials</div>
+    <div id="lockField"><span id="lockCursor"></span></div>
+    <div id="lockStatus"></div>
+  </div>
+
+  <!-- ======== BOOT SCREEN ======== -->
+  <div id="bootScreen" style="display:none">
+    <div id="bootLogo"> ████████╗███╗   ███╗
+ ╚══██╔══╝████╗ ████║
+    ██║   ██╔████╔██║
+    ██║   ██║╚██╔╝██║
+    ██║   ██║ ╚═╝ ██║
+    ╚═╝   ╚═╝     ╚═╝</div>
+    <div id="bootCorpLabel">C O R P O R A T I O N</div>
+    <div id="bootTerminal"></div>
+    <div id="bootProgress"><div id="bootProgressBar"></div></div>
+  </div>
+
+  <!-- ================================================================
+       APP — Main Content
+       ================================================================ -->
+  <div id="app">
+
+    <!-- TOP HUD -->
+    <div class="top-hud">
+      <div class="left">
+        <span style="font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;color:var(--cyan);text-shadow:0 0 10px var(--cyan);">▀█▀ █▀▄▀█  CORP</span>
+      </div>
+      <div class="right">
+        <div id="printBtn" class="term-hud-btn" title="Print CV">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+        </div>
+        <div id="termNavBtn" class="term-hud-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- NAV TABS -->
+    <div class="nav-tabs" style="position:relative;">
+      <div class="nav-tab active" data-section="overview">Overview</div>
+      <div class="nav-tab" data-section="skills">Skills</div>
+      <div class="nav-tab" data-section="experience">Experience</div>
+      <div class="nav-tab" data-section="education">Education</div>
+      <div class="nav-tab" data-section="projects">Projects</div>
+      <div class="nav-tab" data-section="interests">Neural Map</div>
+      <div class="nav-tab" data-section="contact">Contact</div>
+      <div class="nav-indicator" id="navIndicator"></div>
+    </div>
+
+    <!-- ============================================================
+         CONTENT SECTIONS
+         ============================================================ -->
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <div class="panel-section active" id="sec-overview">
+        <div class="overview-grid">
+
+          <div class="panel" style="grid-column:1/3">
+            <div class="panel-header"><div class="icon"></div>Identity Matrix</div>
+            <div class="panel-body">
+              <div class="identity-card">
+                <div class="avatar-holo">
+                  <div class="avatar-scan"></div>
+                  <img class="avatar-photo" src="Images/corpo.jpg" alt="Thomas Monicault">
+                  <div class="avatar-overlay"></div>
+                  <div class="avatar-scanline"></div>
+                </div>
+                <div class="identity-info">
+                  <h1 class="glitch" data-text="THOMAS MONICAULT">THOMAS MONICAULT</h1>
+                  <div class="tagline" id="taglineTyper"></div>
+                  <p class="bio">Curious and creative, I'm drawn to ideas that push boundaries. AI is one of them — today it's part of my workflow, sharpening my skills and expanding what I can build. I adapt quickly, bring ideas to the table, and love exploring new technologies outside my comfort zone. Because the best results come from those who never stop learning.</p>
+                  <p class="bio" style="font-style:italic;opacity:0.6;margin-top:10px;">"The best part of the machine is often the human who operates it." — T.M</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header"><div class="icon"></div>System Status</div>
+            <div class="panel-body">
+              <div class="status-grid">
+                <div class="status-item"><div class="label">Availability</div><div class="value green">ONLINE</div></div>
+                <div class="status-item"><div class="label">Mode</div><div class="value">FREELANCE</div></div>
+                <div class="status-item"><div class="label">Focus</div><div class="value magenta">WEB + AI</div></div>
+                <div class="status-item"><div class="label">Location</div><div class="value amber">FRANCE / CYBERSPACE</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header"><div class="icon"></div>Keyword Cloud</div>
+            <div class="panel-body">
+              <div class="cloud-container">
+                <span class="cloud-tag">curiosity</span>
+                <span class="cloud-tag">self-learner</span>
+                <span class="cloud-tag">resilience</span>
+                <span class="cloud-tag">team worker</span>
+                <span class="cloud-tag">creativity</span>
+                <span class="cloud-tag">autonomy</span>
+                <span class="cloud-tag">adaptability</span>
+                <span class="cloud-tag">communication</span>
+                <span class="cloud-tag">proactive</span>
+                <span class="cloud-tag">kind</span>
+                <span class="cloud-tag">determinate</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SKILLS -->
+      <div class="panel-section" id="sec-skills">
+        <div class="panel">
+          <div class="panel-header"><div class="icon"></div>Skill Radar</div>
+          <div class="panel-body" style="display:flex;justify-content:center;">
+            <canvas id="radarCanvas" width="400" height="400"></canvas>
+          </div>
+        </div>
+        <div class="skills-columns">
+          <div class="panel">
+            <div class="panel-header"><div class="icon"></div>Core Technologies</div>
+            <div class="panel-body">
+              <div class="skill-tags" id="coreTechTags"></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="icon"></div>Extended Systems</div>
+            <div class="panel-body">
+              <div class="skill-tags" id="extSysTags"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPERIENCE -->
+      <div class="panel-section" id="sec-experience">
+        <div class="panel">
+          <div class="panel-header"><div class="icon"></div>Experience Log</div>
+          <div class="panel-body">
+            <div class="exp-timeline">
+
+              <div class="exp-item">
+                <div class="exp-date">2025 — ONGOING</div>
+                <h3>Personal R&D Lab</h3>
+                <p>Exploration of AI-driven tools, automation agents (OpenClaw) and experimental web projects. Building systems that bridge creativity and technology.</p>
+                <div class="exp-tags">
+                  <span class="exp-tag">AI Agents</span>
+                  <span class="exp-tag">Automation</span>
+                  <span class="exp-tag">OpenClaw</span>
+                  <span class="exp-tag">Node.js</span>
+                </div>
+              </div>
+
+              <div class="exp-item">
+                <div class="exp-date" style="color:var(--magenta);">2018 — PRESENT</div>
+                <h3>Freelance Web Integrator / Developer Front-End</h3>
+                <p>Building responsive websites, landing pages and web applications for various clients and personal projects.</p>
+                <div class="exp-tags">
+                  <span class="exp-tag">HTML/CSS</span>
+                  <span class="exp-tag">JavaScript</span>
+                  <span class="exp-tag">React</span>
+                  <span class="exp-tag">Responsive</span>
+                </div>
+              </div>
+
+              <div class="exp-item">
+                <div class="exp-date" style="color:var(--neon-green);">JUL 2017 — OCT 2017</div>
+                <h3>Web Integrator — YES 'N' YOU Digital</h3>
+                <p>Integration of e-learning modules (tests & courses) using the Adapt framework, plus front-end development of specific features.</p>
+                <div class="exp-tags">
+                  <span class="exp-tag">Adapt Framework</span>
+                  <span class="exp-tag">HTML/CSS</span>
+                  <span class="exp-tag">JavaScript</span>
+                  <span class="exp-tag">E-Learning</span>
+                </div>
+              </div>
+
+              <div class="exp-item">
+                <div class="exp-date" style="color:var(--amber);">OCT 2016 — MAR 2017</div>
+                <h3>Web Developer — 3V Finance</h3>
+                <p>Development of the web version of a treasury management application using React.js.</p>
+                <div class="exp-tags">
+                  <span class="exp-tag">React.js</span>
+                  <span class="exp-tag">JavaScript</span>
+                  <span class="exp-tag">Finance</span>
+                </div>
+              </div>
+
+              <div class="exp-item">
+                <div class="exp-date" style="color:#61dafb;">NOV 2014 — JUN 2015</div>
+                <h3>Integrator / Developer — VOLATIL</h3>
+                <p>Web integration and WordPress development for various client websites.</p>
+                <div class="exp-tags">
+                  <span class="exp-tag">WordPress</span>
+                  <span class="exp-tag">HTML/CSS</span>
+                  <span class="exp-tag">Integration</span>
+                </div>
+              </div>
+
+              <div class="exp-item">
+                <div class="exp-date" style="color:#aa44ff;">JUN 2014 — AUG 2014</div>
+                <h3>Intern — IMEX MEDIA</h3>
+                <p>Design and development of the company website and logo creation. First professional experience in web development.</p>
+                <div class="exp-tags">
+                  <span class="exp-tag">Web Design</span>
+                  <span class="exp-tag">Logo</span>
+                  <span class="exp-tag">HTML/CSS</span>
+                  <span class="exp-tag">Internship</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDUCATION -->
+      <div class="panel-section" id="sec-education">
+        <div class="panel">
+          <div class="panel-header"><div class="icon"></div>Education Database</div>
+          <div class="panel-body">
+
+            <div class="edu-card">
+              <h3>Continuous Self-Training — ONGOING</h3>
+              <p>Web integration, development, AI tools, prompt engineering, LLMs, agent frameworks, automation workflows, tech watch, Unreal Engine, Midjourney. Always learning, always building.</p>
+            </div>
+
+            <div class="edu-card" style="border-left-color:var(--magenta);">
+              <h3>IESA Multimedia — 2016 / 2017</h3>
+              <p>Bachelor — Multimedia Project Manager (3rd year). Project management and advanced multimedia production.</p>
+            </div>
+
+            <div class="edu-card" style="border-left-color:var(--neon-green);">
+              <h3>HETIC — 2014 / 2015</h3>
+              <p>Bachelor — Multimedia Project Manager (2nd year). Responsive, SEO, Angular.js, Node.js, Symfony, Sass, project management, Extreme Programming, OOP.</p>
+            </div>
+
+            <div class="edu-card" style="border-left-color:var(--amber);">
+              <h3>CIFACOM — 2013 / 2014</h3>
+              <p>Bachelor — Multimedia Project Manager (1st year). Introduction to Adobe tools, web development and integration fundamentals.</p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS -->
+      <div class="panel-section" id="sec-projects">
+        <div class="panel">
+          <div class="panel-header"><div class="icon"></div>Project Archive</div>
+          <div class="panel-body">
+            <div class="project-grid">
+
+              <div class="project-card">
+                <div class="project-status live">LIVE</div>
+                <h3>Sci-Fi CV Interface</h3>
+                <p>This very website — an immersive cyberpunk CV built as a single HTML file with boot sequences, terminal, sound design and Easter eggs.</p>
+                <div class="project-tags">
+                  <span class="project-tag">HTML</span>
+                  <span class="project-tag">CSS</span>
+                  <span class="project-tag">JavaScript</span>
+                  <span class="project-tag">Web Audio</span>
+                  <span class="project-tag">Canvas</span>
+                </div>
+              </div>
+
+              <div class="project-card">
+                <div class="project-status wip">WIP</div>
+                <h3>Alfred — AI Agent Gateway</h3>
+                <p>Multi-channel AI gateway connecting Discord, WhatsApp and more to LLMs with autonomous agents, cron tasks and skill systems.</p>
+                <div class="project-tags">
+                  <span class="project-tag">Node.js</span>
+                  <span class="project-tag">OpenClaw</span>
+                  <span class="project-tag">AI Agents</span>
+                  <span class="project-tag">Automation</span>
+                </div>
+              </div>
+
+              <div class="project-card">
+                <div class="project-status wip">WIP</div>
+                <h3>Brainrot Factory</h3>
+                <p>Automated short video generation pipeline using AI for concept creation, script writing and video rendering.</p>
+                <div class="project-tags">
+                  <span class="project-tag">Python</span>
+                  <span class="project-tag">Veo API</span>
+                  <span class="project-tag">AI</span>
+                  <span class="project-tag">Automation</span>
+                </div>
+              </div>
+
+              <div class="project-card">
+                <div class="project-status live">LIVE</div>
+                <h3>Various Website Commissions</h3>
+                <p>A wide range of websites, mainly on WordPress. From design to integration and development — for craftsmen, artists and merchants.</p>
+                <div class="project-tags">
+                  <span class="project-tag">HTML</span>
+                  <span class="project-tag">CSS</span>
+                  <span class="project-tag">JavaScript</span>
+                  <span class="project-tag">WordPress</span>
+                  <span class="project-tag">E-Commerce</span>
+                </div>
+              </div>
+
+              <div class="project-card">
+                <div class="project-status concept">CONCEPT</div>
+                <h3>Lovecraftian FPS — Unreal Engine</h3>
+                <p>A first-person horror game blending cosmic dread and dark fascination, built as a learning project to master Unreal Engine 5.</p>
+                <div class="project-tags">
+                  <span class="project-tag">UE5</span>
+                  <span class="project-tag">Blueprints</span>
+                  <span class="project-tag">3D Modelling</span>
+                </div>
+              </div>
+
+              <div class="project-card">
+                <div class="project-status concept">CONCEPT</div>
+                <h3>Music Video Production</h3>
+                <p>Video editing and clip production for self-produced music tracks, combining visual storytelling with original compositions.</p>
+                <div class="project-tags">
+                  <span class="project-tag">Adobe Premiere</span>
+                  <span class="project-tag">FL Studio</span>
+                </div>
+              </div>
+
+              <div class="project-card">
+                <div class="project-status old">OLD</div>
+                <h3>Crypto Custom Websites</h3>
+                <p>Bespoke websites built from scratch in pure HTML/CSS for cryptocurrency projects, with Web3 integration capabilities.</p>
+                <div class="project-tags">
+                  <span class="project-tag">HTML</span>
+                  <span class="project-tag">CSS</span>
+                  <span class="project-tag">Web3</span>
+                  <span class="project-tag">Blockchain</span>
+                  <span class="project-tag">Crypto</span>
+                </div>
+              </div>
+
+              <div class="project-card">
+                <div class="project-status concept">CONCEPT</div>
+                <h3>AI Art Direction & Gallery</h3>
+                <p>Full artistic accompaniment for an artist and their gallery — from conceptualisation to visual production using Midjourney and Photoshop.</p>
+                <div class="project-tags">
+                  <span class="project-tag">Midjourney</span>
+                  <span class="project-tag">Adobe Photoshop</span>
+                  <span class="project-tag">Art Direction</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERESTS / NEURAL MAP -->
+      <div class="panel-section" id="sec-interests">
+        <div class="panel">
+          <div class="panel-header"><div class="icon"></div>Neural Interest Map</div>
+          <div class="panel-body">
+            <div class="neural-grid">
+              <div class="neural-node"><div class="node-icon">🎧</div><div class="node-label">Trip-hop</div></div>
+              <div class="neural-node"><div class="node-icon">🤖</div><div class="node-label">AI Systems</div></div>
+              <div class="neural-node"><div class="node-icon">🏗️</div><div class="node-label">Brutalism</div></div>
+              <div class="neural-node"><div class="node-icon">🌧️</div><div class="node-label">Blade Runner</div></div>
+              <div class="neural-node"><div class="node-icon">🤝</div><div class="node-label">People</div></div>
+              <div class="neural-node"><div class="node-icon">⚡</div><div class="node-label">Automation</div></div>
+              <div class="neural-node"><div class="node-icon">🐙</div><div class="node-label">Lovecraft</div></div>
+              <div class="neural-node"><div class="node-icon">🎛️</div><div class="node-label">Electro</div></div>
+              <div class="neural-node"><div class="node-icon">☢️</div><div class="node-label">Fallout New Vegas</div></div>
+              <div class="neural-node"><div class="node-icon">💬</div><div class="node-label">To Talk</div></div>
+              <div class="neural-node"><div class="node-icon">🌐</div><div class="node-label">Open Web</div></div>
+              <div class="neural-node"><div class="node-icon">🖋️</div><div class="node-label">Tatoos</div></div>
+              <div class="neural-node"><div class="node-icon">🌆</div><div class="node-label">Cyberpunk 2077</div></div>
+              <div class="neural-node"><div class="node-icon">📖</div><div class="node-label">Asimov</div></div>
+              <div class="neural-node"><div class="node-icon">🔓</div><div class="node-label">Decentralised Tech</div></div>
+              <div class="neural-node"><div class="node-icon">💀</div><div class="node-label">Neuromancer</div></div>
+              <div class="neural-node"><div class="node-icon">🛼</div><div class="node-label">Roller</div></div>
+              <div class="neural-node"><div class="node-icon">🎮</div><div class="node-label">Unreal Engine</div></div>
+              <div class="neural-node"><div class="node-icon">🎹</div><div class="node-label">Music Production</div></div>
+              <div class="neural-node"><div class="node-icon">🕹️</div><div class="node-label">Online Games</div></div>
+              <div class="neural-node"><div class="node-icon">❤️</div><div class="node-label">Mum</div></div>
+              <div class="neural-node"><div class="node-icon">🏍️</div><div class="node-label">Akira</div></div>
+              <div class="neural-node"><div class="node-icon">🧙</div><div class="node-label">LOTR</div></div>
+              <div class="neural-node"><div class="node-icon">🤘</div><div class="node-label">Rage Against The Machine</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="panel-section" id="sec-contact">
+        <div class="panel">
+          <div class="panel-header"><div class="icon"></div>Contact Nodes</div>
+          <div class="panel-body">
+            <div class="contact-grid">
+
+              <a class="contact-item" href="mailto:thomas.monicault@gmail.com">
+                <div class="contact-icon" style="color:var(--neon-green);border-color:var(--neon-green);">@</div>
+                <div>
+                  <div class="contact-label">Email</div>
+                  <div class="contact-value" style="color:var(--neon-green);">thomas.monicault@gmail.com</div>
+                </div>
+              </a>
+
+              <a class="contact-item" href="https://www.linkedin.com/in/thomas-monicault-1aa74964/" target="_blank" rel="noopener">
+                <div class="contact-icon" style="color:var(--cyan);border-color:var(--cyan);">◈</div>
+                <div>
+                  <div class="contact-label">LinkedIn</div>
+                  <div class="contact-value" style="color:var(--cyan);">thomas-monicault</div>
+                </div>
+              </a>
+
+              <a class="contact-item" href="https://github.com/tm-developer" target="_blank" rel="noopener">
+                <div class="contact-icon" style="color:var(--magenta);border-color:var(--magenta);">⟁</div>
+                <div>
+                  <div class="contact-label">GitHub</div>
+                  <div class="contact-value" style="color:var(--magenta);">tm-developer</div>
+                </div>
+              </a>
+
+              <div class="contact-item" style="cursor:default;">
+                <div class="contact-icon" style="color:var(--amber);border-color:var(--amber);">⊕</div>
+                <div>
+                  <div class="contact-label">Location</div>
+                  <div class="contact-value" style="color:var(--amber);">France / Cyberspace</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /app -->
+
+  <!-- ======== FLOATING TERMINAL ======== -->
+  <div id="terminal" class="hidden">
+    <div class="term-resize term-resize-left"></div>
+    <div class="term-resize term-resize-top"></div>
+    <div class="term-resize term-resize-topleft"></div>
+    <div class="term-resize term-resize-topright"></div>
+    <div class="term-header" id="termToggle">
+      <span class="term-logo">▀█▀ █▀▄▀█</span>
+      <div class="term-title">TERMINAL</div>
+      <div class="term-close" id="termClose" title="Close terminal">&times;</div>
+    </div>
+    <div id="termOutput"></div>
+    <div class="term-input-wrap">
+      <span class="prompt">❯</span>
+      <input type="text" id="termInput" placeholder="type help..." autocomplete="off" spellcheck="false">
+    </div>
+  </div>
+
+  <!-- ======== SCRIPTS ======== -->
+  <script src="js/audio.js"></script>
+  <script src="js/effects.js"></script>
+  <script src="js/navigation.js"></script>
+  <script src="js/skills.js"></script>
+  <script src="js/terminal.js"></script>
+  <script src="js/cursor.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/boot.js"></script>
+
+</body>
+</html>

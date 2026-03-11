@@ -1,0 +1,205 @@
+/* ============================================================
+   LAYOUT — HUD, Navigation, Panels, Content
+   T.M CORP — Cyberpunk CV
+   ============================================================ */
+
+/* --- Black Overlay --- */
+#blackOverlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: #020509;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+#blackOverlay.hidden { opacity: 0; }
+
+/* --- Main App --- */
+#app {
+  display: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  position: relative;
+  z-index: 2;
+}
+#app.visible { display: block; opacity: 1; }
+
+/* --- Top HUD Bar --- */
+.top-hud {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 44px;
+  background: linear-gradient(180deg, rgba(10, 17, 40, 0.95), rgba(10, 17, 40, 0.7));
+  border-bottom: 1px solid var(--panel-border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  backdrop-filter: blur(10px);
+}
+.top-hud .left  { display: flex; gap: 20px; align-items: center; }
+.top-hud .right { display: flex; gap: 20px; align-items: center; }
+
+/* HUD Indicators */
+.hud-indicator { display: flex; align-items: center; gap: 6px; }
+.hud-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  animation: blink 2s infinite;
+}
+.hud-dot.green  { background: var(--neon-green); box-shadow: 0 0 8px var(--neon-green); }
+.hud-dot.amber  { background: var(--amber);      box-shadow: 0 0 8px var(--amber); }
+.hud-dot.red    { background: var(--red);         box-shadow: 0 0 8px var(--red); }
+.hud-dot.cyan   { background: var(--cyan);        box-shadow: 0 0 8px var(--cyan); }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* --- Monitor HUD (bottom corners) --- */
+#monitorHud {
+  position: fixed; bottom: 12px; right: 16px; z-index: 998;
+  display: flex; align-items: center; gap: 16px;
+  font-family: 'Share Tech Mono', monospace; font-size: 11px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+#monitorHudLeft {
+  position: fixed; bottom: 12px; left: 16px; z-index: 998;
+  display: none; align-items: center; gap: 16px;
+  font-family: 'Share Tech Mono', monospace; font-size: 11px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+#clock          { color: var(--cyan); }
+#uptimeCounter  { color: var(--amber); }
+
+/* Terminal / Print HUD buttons */
+.term-hud-btn {
+  display: flex; align-items: center; justify-content: center;
+  padding: 4px 8px;
+  color: rgba(200, 230, 255, 0.5);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.term-hud-btn:hover,
+.term-hud-btn.active {
+  color: var(--cyan);
+  border-color: var(--panel-border);
+  background: rgba(0, 245, 255, 0.05);
+  text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+}
+
+/* --- Navigation Tabs --- */
+.nav-tabs {
+  position: fixed; top: 44px; left: 0; right: 0; z-index: 99;
+  height: 38px;
+  background: rgba(10, 17, 40, 0.85);
+  border-bottom: 1px solid var(--panel-border);
+  display: flex; align-items: center;
+  padding: 0 24px; gap: 4px;
+  backdrop-filter: blur(10px);
+}
+.nav-tab {
+  font-family: 'Orbitron', sans-serif; font-size: 10px; letter-spacing: 2px;
+  padding: 8px 18px;
+  color: rgba(200, 230, 255, 0.5);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: transparent;
+  text-transform: uppercase;
+}
+.nav-tab:hover,
+.nav-tab.active {
+  color: var(--cyan);
+  border-color: var(--panel-border);
+  background: rgba(0, 245, 255, 0.05);
+  text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+}
+.nav-tab.active { border-bottom-color: var(--cyan); }
+
+.nav-indicator {
+  position: absolute; bottom: 0; height: 2px;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  transition: left 0.3s ease, width 0.3s ease;
+  pointer-events: none;
+}
+
+/* --- Content Area --- */
+.content {
+  margin-top: 82px;
+  padding: 30px;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --- Sections --- */
+.panel-section {
+  display: none;
+  opacity: 0;
+  transform: translateY(12px);
+  position: relative;
+}
+.panel-section.active {
+  display: block;
+  animation: sectionIn 0.5s ease 0.15s forwards;
+}
+@keyframes sectionIn { to { opacity: 1; transform: translateY(0); } }
+
+/* --- Panels --- */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.panel::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+}
+.panel-header {
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--panel-border);
+  font-family: 'Orbitron', sans-serif; font-size: 11px; letter-spacing: 2px;
+  color: var(--cyan);
+  display: flex; align-items: center; gap: 10px;
+  text-transform: uppercase;
+  transition: text-shadow 0.3s ease;
+}
+.panel-header:hover {
+  text-shadow: 0 0 15px rgba(0, 245, 255, 0.5), 0 0 30px rgba(0, 245, 255, 0.2);
+}
+.panel-header .icon {
+  width: 8px; height: 8px;
+  background: var(--cyan);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  box-shadow: 0 0 8px var(--cyan);
+}
+.panel-body { padding: 20px; }
+
+/* --- Page Transition Overlay --- */
+#pageTransition {
+  position: fixed; inset: 0; z-index: 9000;
+  pointer-events: none;
+  opacity: 0;
+}
+#pageTransition.flash { animation: pageFlash 0.3s ease; }
+@keyframes pageFlash {
+  0%   { opacity: 0; }
+  30%  { opacity: 1; background: rgba(0, 245, 255, 0.06); }
+  50%  { opacity: 1; background: rgba(0, 245, 255, 0.03); }
+  100% { opacity: 0; background: transparent; }
+}
+#pageTransition .glitch-bar {
+  position: absolute; left: 0; right: 0;
+  height: 2px;
+  background: var(--cyan);
+  opacity: 0;
+}
+#pageTransition.flash .glitch-bar:nth-child(1) { top: 20%; animation: barFlash 0.3s ease; }
+#pageTransition.flash .glitch-bar:nth-child(2) { top: 55%; animation: barFlash 0.3s 0.05s ease; }
+#pageTransition.flash .glitch-bar:nth-child(3) { top: 80%; animation: barFlash 0.3s 0.1s ease; }
+@keyframes barFlash {
+  0%   { opacity: 0; transform: scaleX(0); }
+  40%  { opacity: 0.8; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(0); }
+}

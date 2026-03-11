@@ -1,0 +1,55 @@
+/* ============================================================
+   RESPONSIVE — Tablet & Mobile Breakpoints
+   T.M CORP — Cyberpunk CV
+   ============================================================ */
+
+/* --- Tablet (900px) --- */
+@media (max-width: 900px) {
+  .overview-grid { grid-template-columns: 1fr; }
+  .overview-grid .panel[style*="grid-column"] { grid-column: 1 !important; }
+  .identity-card { grid-column: 1; flex-direction: column; text-align: center; }
+  .contact-grid  { grid-template-columns: 1fr; }
+  .skills-columns { grid-template-columns: 1fr; }
+  .content { padding: 16px; }
+  #terminal { width: calc(100vw - 30px); right: 15px; }
+}
+
+/* --- Mobile (480px) --- */
+@media (max-width: 480px) {
+  .top-hud { padding: 0 12px; height: 38px; }
+
+  .nav-tabs {
+    top: 38px; height: 40px;
+    overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap; gap: 0;
+  }
+  .nav-tab {
+    padding: 6px 12px; font-size: 9px;
+    white-space: nowrap; flex-shrink: 0;
+  }
+
+  .content { margin-top: 42px; padding: 12px; }
+
+  .identity-info h1 { font-size: 22px; letter-spacing: 2px; }
+  .identity-info .tagline { font-size: 11px; letter-spacing: 1px; }
+  .identity-info .bio { font-size: 12px; }
+  .avatar-holo { width: 100px; height: 100px; }
+  .status-grid { grid-template-columns: 1fr 1fr; }
+
+  .project-grid { grid-template-columns: 1fr; }
+  .project-card h3 { font-size: 12px; }
+  .project-card p  { font-size: 11px; }
+
+  #terminal { width: calc(100vw - 16px); right: 8px; bottom: 8px; min-width: 200px; }
+  #radarCanvas { max-width: 100%; height: auto; }
+  .term-resize { display: none; }
+
+  #monitorHud, #monitorHudLeft { font-size: 9px; bottom: 2px; }
+  .panel-header { font-size: 12px; }
+
+  /* Disable custom cursor on touch devices */
+  #cursorDot, #cursorRing { display: none !important; }
+  * { cursor: default !important; }
+  #terminal.hidden { display: none; }
+}

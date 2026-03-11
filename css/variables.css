@@ -1,0 +1,37 @@
+/* ============================================================
+   VARIABLES & RESET
+   T.M CORP — Cyberpunk CV
+   ============================================================ */
+
+/* --- Reset --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* --- Custom Properties --- */
+:root {
+  --cyan:         #00f5ff;
+  --cyan-dim:     rgba(0, 245, 255, 0.15);
+  --magenta:      #ff00ff;
+  --magenta-dim:  rgba(255, 0, 255, 0.12);
+  --neon-green:   #00ff9c;
+  --amber:        #ffaa00;
+  --red:          #ff3344;
+  --bg:           #030812;
+  --panel:        #0a1128;
+  --panel-border: rgba(0, 245, 255, 0.2);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: #c8e6ff;
+  font-family: 'Rajdhani', sans-serif;
+  overflow-x: hidden;
+  cursor: default;
+}
