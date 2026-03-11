@@ -101,6 +101,30 @@ window.startAmbient = function () {
 
   /* Fade in over 3 seconds */
   ambientGain.gain.linearRampToValueAtTime(1, audioCtx.currentTime + 3)
+
+  /* Layer 4 — random electronic blips */
+  function scheduleBlip () {
+    if (!audioCtx || audioCtx.state === 'closed') return
+    const t = audioCtx.currentTime
+    const freq = [800, 1200, 1600, 2000, 2400, 3200][Math.floor(Math.random() * 6)]
+    const dur = 0.04 + Math.random() * 0.06
+
+    const osc = audioCtx.createOscillator()
+    osc.type = ['sine', 'triangle'][Math.floor(Math.random() * 2)]
+    osc.frequency.setValueAtTime(freq, t)
+
+    const g = audioCtx.createGain()
+    g.gain.setValueAtTime(0.015 + Math.random() * 0.01, t)
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur)
+
+    osc.connect(g).connect(ambientGain)
+    osc.start(t)
+    osc.stop(t + dur)
+
+    /* Next blip in 3–8 seconds */
+    setTimeout(scheduleBlip, 3000 + Math.random() * 5000)
+  }
+  setTimeout(scheduleBlip, 4000)
 }
 
 /**
