@@ -48,6 +48,9 @@
   #monitorHud, #monitorHudLeft { font-size: 9px; bottom: 2px; }
   .panel-header { font-size: 12px; }
 
+  #bootLogo { font-size: 10px; line-height: 1.2; }
+  #bootCorpLabel { font-size: 10px; letter-spacing: 4px; }
+
   /* Disable custom cursor on touch devices */
   #cursorDot, #cursorRing { display: none !important; }
   * { cursor: default !important; }
