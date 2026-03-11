@@ -160,24 +160,35 @@ window.typeTagline = function () {
 window.signalInterference = function () {
   if (!fxEnabled) return
 
-  /* Glitch sound — filtered noise burst */
+  /* Glitch sound — layered noise + tone burst */
   if (window.audioCtx) {
     const ctx = window.audioCtx
-    const dur = 0.15
-    const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate)
-    const data = buf.getChannelData(0)
-    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.12
-    const src = ctx.createBufferSource()
-    src.buffer = buf
-    const filt = ctx.createBiquadFilter()
-    filt.type = 'bandpass'
-    filt.frequency.value = 800 + Math.random() * 2000
-    filt.Q.value = 5
-    const gain = ctx.createGain()
-    gain.gain.setValueAtTime(0.08, ctx.currentTime)
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur)
-    src.connect(filt).connect(gain).connect(ctx.destination)
-    src.start()
+    const t = ctx.currentTime
+    const dur = 0.35
+
+    /* Layer 1: harsh noise */
+    const noiseBuf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate)
+    const nd = noiseBuf.getChannelData(0)
+    for (let i = 0; i < nd.length; i++) nd[i] = (Math.random() * 2 - 1) * 0.6
+    const noiseSrc = ctx.createBufferSource()
+    noiseSrc.buffer = noiseBuf
+    const noiseGain = ctx.createGain()
+    noiseGain.gain.setValueAtTime(0.3, t)
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, t + dur)
+    noiseSrc.connect(noiseGain).connect(ctx.destination)
+    noiseSrc.start(t)
+
+    /* Layer 2: digital crackle tone */
+    const osc = ctx.createOscillator()
+    osc.type = 'square'
+    osc.frequency.setValueAtTime(120, t)
+    osc.frequency.linearRampToValueAtTime(40, t + dur)
+    const oscGain = ctx.createGain()
+    oscGain.gain.setValueAtTime(0.15, t)
+    oscGain.gain.exponentialRampToValueAtTime(0.001, t + dur)
+    osc.connect(oscGain).connect(ctx.destination)
+    osc.start(t)
+    osc.stop(t + dur)
   }
 
   const glitch = document.createElement('div')
