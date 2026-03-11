@@ -173,7 +173,7 @@ window.signalInterference = function () {
     const noiseSrc = ctx.createBufferSource()
     noiseSrc.buffer = noiseBuf
     const noiseGain = ctx.createGain()
-    noiseGain.gain.setValueAtTime(0.3, t)
+    noiseGain.gain.setValueAtTime(0.12, t)
     noiseGain.gain.exponentialRampToValueAtTime(0.001, t + dur)
     noiseSrc.connect(noiseGain).connect(ctx.destination)
     noiseSrc.start(t)
@@ -184,7 +184,7 @@ window.signalInterference = function () {
     osc.frequency.setValueAtTime(120, t)
     osc.frequency.linearRampToValueAtTime(40, t + dur)
     const oscGain = ctx.createGain()
-    oscGain.gain.setValueAtTime(0.15, t)
+    oscGain.gain.setValueAtTime(0.06, t)
     oscGain.gain.exponentialRampToValueAtTime(0.001, t + dur)
     osc.connect(oscGain).connect(ctx.destination)
     osc.start(t)
