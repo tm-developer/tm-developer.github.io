@@ -160,6 +160,26 @@ window.typeTagline = function () {
 window.signalInterference = function () {
   if (!fxEnabled) return
 
+  /* Glitch sound — filtered noise burst */
+  if (window.audioCtx) {
+    const ctx = window.audioCtx
+    const dur = 0.15
+    const buf = ctx.createBuffer(1, ctx.sampleRate * dur, ctx.sampleRate)
+    const data = buf.getChannelData(0)
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.12
+    const src = ctx.createBufferSource()
+    src.buffer = buf
+    const filt = ctx.createBiquadFilter()
+    filt.type = 'bandpass'
+    filt.frequency.value = 800 + Math.random() * 2000
+    filt.Q.value = 5
+    const gain = ctx.createGain()
+    gain.gain.setValueAtTime(0.08, ctx.currentTime)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur)
+    src.connect(filt).connect(gain).connect(ctx.destination)
+    src.start()
+  }
+
   const glitch = document.createElement('div')
   glitch.style.cssText = 'position:fixed;inset:0;z-index:9999;pointer-events:none;background:rgba(0,245,255,0.03);mix-blend-mode:overlay;'
   document.body.appendChild(glitch)
