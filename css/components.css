@@ -471,6 +471,7 @@
 #termOutput .line.success { color: var(--neon-green); }
 #termOutput .line.error   { color: var(--red); }
 #termOutput .line.info    { color: var(--magenta); }
+#termOutput .line.cmd     { color: var(--neon-green); }
 
 /* Terminal input */
 .term-input-wrap {

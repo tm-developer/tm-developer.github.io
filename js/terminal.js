@@ -437,7 +437,7 @@ termInput.addEventListener('keydown', e => {
   cmdHistory.push(raw)
   histIdx = -1
 
-  termLog('❯ ' + raw)
+  termLog('❯ ' + raw, 'cmd')
 
   /* --- clear --- */
   if (cmd === 'clear') { termOutput.innerHTML = ''; return }
