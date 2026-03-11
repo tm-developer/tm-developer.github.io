@@ -26,7 +26,7 @@ window.decodeReveal = function (container) {
 
   /* Scramble & decode all text elements */
   const elements = container.querySelectorAll(
-    'h1,h2,h3,p,span,.tagline,.bio,.exp-date,.exp-tag,.edu-card,.contact-value,.cloud-tag,.status-item .value,.panel-header'
+    'h1,h2,h3,p,span,.tagline,.bio,.exp-date,.exp-tag,.edu-card,.contact-value,.cloud-tag,.status-item .value,.panel-header,.node-label'
   )
   elements.forEach(el => {
     if (el.querySelector('canvas') || el.querySelector('svg')) return
