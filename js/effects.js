@@ -68,7 +68,7 @@ window.fxEnabled = true
   document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY })
 
   const particles = []
-  const COUNT = 60
+  const COUNT = 72
 
   function makeParticle (x, y) {
     const angle = Math.random() * Math.PI * 2
@@ -78,6 +78,9 @@ window.fxEnabled = true
       y:  y != null ? y : Math.random() * innerHeight,
       vx: Math.cos(angle) * speed,
       vy: Math.sin(angle) * speed,
+      driftX: Math.cos(angle),
+      driftY: Math.sin(angle),
+      baseSpd: speed * 0.4,
       r:  Math.random() * 2 + 0.5,
       o:  Math.random() * 0.4 + 0.1,
       life: x != null ? 1 : null   /* spawned particles fade out */
@@ -106,9 +109,14 @@ window.fxEnabled = true
         p.vy += dy / dist * force
       }
 
-      /* Dampen & move */
+      /* Dampen & drift — always keep a base velocity */
       p.vx *= 0.98
       p.vy *= 0.98
+      const spd = Math.sqrt(p.vx * p.vx + p.vy * p.vy)
+      if (spd < p.baseSpd) {
+        p.vx += p.driftX * 0.02
+        p.vy += p.driftY * 0.02
+      }
       p.x += p.vx
       p.y += p.vy
       if (p.x < 0) p.x = c.width
